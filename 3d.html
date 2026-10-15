@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحاكي ثلاثي الأبعاد — زوايا اللوح الشمسي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+:root{
+  --bg:#fefcf8; --card:#ffffff; --text:#1a2332; --muted:#64748b;
+  --accent:#ea580c; --accent-soft:rgba(234,88,12,.10);
+  --accent2:#16a34a; --accent3:#0e7490; --warn:#d97706; --bad:#dc2626;
+  --border:rgba(15,23,42,.08); --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+.layout{display:grid;grid-template-columns:360px 1fr;height:100vh}
+@media(max-width:860px){.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:auto;overflow-y:auto}#canvasWrap{height:60vh}}
+.panel{background:var(--card);border-left:1px solid var(--border);padding:22px;overflow-y:auto;box-shadow:var(--shadow)}
+.panel h1{font-size:20px;font-weight:900;margin-bottom:4px;color:var(--text)}
+.panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:18px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent3);text-decoration:none;font-weight:700;margin-bottom:14px}
+.back-link:hover{text-decoration:underline}
+.sec{margin-bottom:20px}
+.sec-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sec-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px}
+.slider-row{margin-bottom:14px}
+.slider-row label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#334155;margin-bottom:6px}
+.slider-row label .val{color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:999px;background:#e5e7eb;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 6px rgba(234,88,12,.4)}
+select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13.5px;background:#fbfbf9;margin-bottom:10px}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ro{background:#faf9f5;border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.ro .lbl{font-size:11px;color:var(--muted);font-weight:700}
+.ro .v{font-size:17px;font-weight:900;margin-top:2px;font-variant-numeric:tabular-nums}
+.ro.good .v{color:var(--accent2)}
+.ro.warn .v{color:var(--warn)}
+.ro.bad .v{color:var(--bad)}
+.eff-bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:6px}
+.eff-fill{height:100%;border-radius:999px;transition:width .3s,background .3s}
+.tip{background:var(--accent-soft);border:1px solid rgba(234,88,12,.25);border-radius:10px;padding:11px 13px;font-size:12.5px;color:#9a3412;line-height:1.7;margin-top:14px}
+.tip strong{color:var(--accent)}
+#canvasWrap{position:relative;background:linear-gradient(180deg,#bfe3ff 0%,#e8f4fd 55%,#f5efe0 100%)}
+#canvasWrap canvas{display:block}
+.hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:7px 16px;border-radius:999px;font-size:12px;color:var(--muted);font-weight:700;pointer-events:none}
+.compass{position:absolute;top:16px;left:16px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--muted);box-shadow:var(--shadow)}
+.compass span{position:absolute}
+.compass .n{top:4px;color:var(--bad)}
+.compass .s{bottom:4px}
+.compass .e{left:6px}
+.compass .w{right:6px}
+.sun-needle{position:absolute;top:50%;left:50%;width:2px;height:24px;background:var(--accent);transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);border-radius:2px;transition:transform .2s}
+.sun-needle::after{content:'';position:absolute;top:-6px;left:-4px;width:10px;height:10px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #f59e0b}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- CONTROL PANEL -->
+  <div class="panel">
+    <a class="back-link" href="index.html">← العودة للحاسبة الرئيسية</a>
+    <h1>المحاكي ثلاثي الأبعاد</h1>
+    <div class="sub">زاوية الميل (Tilt) والاتجاه (Azimuth) وسقوط الإشعاع الشمسي</div>
+
+    <div class="sec">
+      <div class="sec-title">الموقع والوقت</div>
+      <select id="city">
+        <option value="24.7">الرياض (خط العرض 24.7°)</option>
+        <option value="21.5">مكة المكرمة (21.5°)</option>
+        <option value="21.5">جدة (21.5°)</option>
+        <option value="24.5">المدينة المنورة (24.5°)</option>
+        <option value="26.4">الدمام (26.4°)</option>
+        <option value="27.5">تبوك (27.5°)</option>
+        <option value="27.0">حائل (27.0°)</option>
+        <option value="26.3">بريدة / القصيم (26.3°)</option>
+        <option value="17.5">نجران (17.5°)</option>
+        <option value="18.2">أبها (18.2°)</option>
+      </select>
+      <div class="slider-row">
+        <label>شهر السنة <span class="val" id="monthVal">6 (يونيو)</span></label>
+        <input type="range" id="month" min="1" max="12" value="6" step="1">
+      </div>
+      <div class="slider-row">
+        <label>وقت اليوم <span class="val" id="hourVal">12:00 ظهراً</span></label>
+        <input type="range" id="hour" min="6" max="18" value="12" step="0.5">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">زوايا اللوح الشمسي</div>
+      <div class="slider-row">
+        <label>زاوية الميل Tilt <span class="val" id="tiltVal">25°</span></label>
+        <input type="range" id="tilt" min="0" max="60" value="25" step="1">
+      </div>
+      <div class="slider-row">
+        <label>الاتجاه Azimuth (من الشمال، عقارب الساعة) <span class="val" id="azVal">180° (جنوب)</span></label>
+        <input type="range" id="az" min="0" max="360" value="180" step="5">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">النتائج اللحظية</div>
+      <div class="readout">
+        <div class="ro"><div class="lbl">ارتفاع الشمس</div><div class="v" id="oElev">—</div></div>
+        <div class="ro"><div class="lbl">اتجاه الشمس Azimuth</div><div class="v" id="oAz">—</div></div>
+        <div class="ro"><div class="lbl">زاوية السقوط Incidence</div><div class="v" id="oInc">—</div></div>
+        <div class="ro good" id="effRo"><div class="lbl">كفاءة السقوط (cos θ)</div><div class="v" id="oEff">—</div></div>
+      </div>
+      <div class="eff-bar"><div class="eff-fill" id="effFill" style="width:0%"></div></div>
+      <div class="tip" id="tipBox">
+        <strong>💡 زاوية الميل المثلى السنوية:</strong> تقريباً تساوي خط عرض المدينة (~25° للرياض). الاتجاه المثلى نحو <strong>الجنوب تماماً (Azimuth = 180°)</strong> في نصف الكرة الشمالي.
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D CANVAS -->
+  <div id="canvasWrap">
+    <div class="compass">
+      <span class="n">ش</span><span class="s">ج</span><span class="e">ش</span><span class="w">غ</span>
+      <div class="sun-needle" id="sunNeedle"></div>
+    </div>
+    <div class="hint">اسحب لتدوير المشهد • عجلة الفأرة للتقريب</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','دمبر'];
+  var DEG = Math.PI/180;
+
+  // ===== Three.js setup =====
+  var wrap = document.getElementById('canvasWrap');
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, wrap.clientWidth/wrap.clientHeight, 0.1, 200);
+  camera.position.set(9, 7, 11);
+  var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled = true;
+  wrap.appendChild(renderer.domElement);
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0,1,0);
+  controls.enableDamping = true;
+  controls.maxPolarAngle = Math.PI/2.05;
+
+  // lights
+  var amb = new THREE.AmbientLight(0xffffff, 0.55);
+  scene.add(amb);
+  var sunLight = new THREE.DirectionalLight(0xfff2c8, 1.1);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.set(1024,1024);
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+
+  // ground
+  var ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(40,40),
+    new THREE.MeshStandardMaterial({color:0xe8dcc0, roughness:1})
+  );
+  ground.rotation.x = -Math.PI/2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  var grid = new THREE.GridHelper(40, 40, 0xc9b98f, 0xd9cba8);
+  grid.position.y = 0.01;
+  scene.add(grid);
+
+  // roof platform
+  var roof = new THREE.Mesh(
+    new THREE.BoxGeometry(6, 0.3, 5),
+    new THREE.MeshStandardMaterial({color:0xb0a08a, roughness:0.9})
+  );
+  roof.position.y = 0.15;
+  roof.receiveShadow = true; roof.castShadow = true;
+  scene.add(roof);
+
+  // solar panel (group) — thin box with blue cells
+  var panelGroup = new THREE.Group();
+  var panelBody = new THREE.Mesh(
+    new THREE.BoxGeometry(3.2, 0.08, 2.0),
+    new THREE.MeshStandardMaterial({color:0x1e3a5f, metalness:0.6, roughness:0.25})
+  );
+  panelBody.castShadow = true;
+  panelGroup.add(panelBody);
+  // cell grid lines
+  var cellMat = new THREE.MeshStandardMaterial({color:0x2563eb, metalness:0.4, roughness:0.3});
+  for(var i=0;i<4;i++){
+    for(var j=0;j<3;j++){
+      var cell = new THREE.Mesh(new THREE.BoxGeometry(0.72,0.02,0.58), cellMat);
+      cell.position.set(-1.2+i*0.8, 0.05, -0.65+j*0.65);
+      panelGroup.add(cell);
+    }
+  }
+  // stand
+  var stand = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.08,0.1,1.2,8),
+    new THREE.MeshStandardMaterial({color:0x64748b, metalness:0.7, roughness:0.4})
+  );
+  stand.position.y = -0.6;
+  panelGroup.add(stand);
+  panelGroup.position.y = 1.0;
+  scene.add(panelGroup);
+
+  // normal arrow (panel facing direction)
+  var normalArrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,1,0), 2.5, 0x16a34a, 0.35, 0.2);
+  scene.add(normalArrow);
+
+  // sun sphere + ray line
+  var sunMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.45, 24, 24),
+    new THREE.MeshBasicMaterial({color:0xfbbf24})
+  );
+  scene.add(sunMesh);
+  var sunGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.7, 24, 24),
+    new THREE.MeshBasicMaterial({color:0xfde68a, transparent:true, opacity:0.35})
+  );
+  scene.add(sunGlow);
+  var rayGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+  var rayLine = new THREE.Line(rayGeom, new THREE.LineBasicMaterial({color:0xf59e0b, transparent:true, opacity:0.6}));
+  scene.add(rayLine);
+
+  // cardinal markers on ground
+  function mkLabel(text, x, z, color){
+    var cv = document.createElement('canvas'); cv.width=128; cv.height=64;
+    var ctx = cv.getContext('2d');
+    ctx.font='bold 40px Tajawal, Arial'; ctx.fillStyle=color; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(text,64,32);
+    var tex = new THREE.CanvasTexture(cv);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true}));
+    sp.position.set(x, 0.5, z); sp.scale.set(2,1,1);
+    scene.add(sp);
+  }
+  mkLabel('شمال', 0, -8, '#dc2626');
+  mkLabel('جنوب', 0, 8, '#0e7490');
+  mkLabel('شرق', 8, 0, '#16a34a');
+  mkLabel('غرب', -8, 0, '#7c3aed');
+
+  // ===== Sun position math =====
+  function sunAngles(latDeg, month, hour){
+    var lat = latDeg*DEG;
+    var dayOfYear = Math.round((month-1)*30.4 + 15); // mid-month
+    var decl = 23.45*DEG * Math.sin(2*Math.PI*(284+dayOfYear)/365);
+    var H = 15*(hour-12)*DEG;
+    var sinElev = Math.sin(decl)*Math.sin(lat) + Math.cos(decl)*Math.cos(lat)*Math.cos(H);
+    sinElev = Math.max(-1,Math.min(1,sinElev));
+    var elev = Math.asin(sinElev);
+    var sinAz = -Math.cos(decl)*Math.sin(H) / Math.cos(elev);
+    var cosAz = (Math.sin(decl)*Math.cos(lat) - Math.cos(decl)*Math.sin(lat)*Math.cos(H)) / Math.cos(elev);
+    sinAz = Math.max(-1,Math.min(1,sinAz)); cosAz = Math.max(-1,Math.min(1,cosAz));
+    var az = Math.atan2(sinAz, cosAz); // from north, clockwise? atan2(sin,cos) gives CCW from +x; convert
+    // convert to 0..360 from north clockwise
+    var azDeg = az/DEG;
+    if(azDeg<0) azDeg+=360;
+    return {elev:elev, elevDeg:elev/DEG, azDeg:azDeg};
+  }
+
+  // ===== update =====
+  function update(){
+    var lat = parseFloat(document.getElementById('city').value);
+    var month = parseInt(document.getElementById('month').value);
+    var hour = parseFloat(document.getElementById('hour').value);
+    var tilt = parseFloat(document.getElementById('tilt').value);
+    var az = parseFloat(document.getElementById('az').value);
+
+    document.getElementById('monthVal').textContent = month + ' (' + MONTHS[month-1] + ')';
+    var hh = Math.floor(hour), mm = Math.round((hour-hh)*60);
+    document.getElementById('hourVal').textContent = (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm + (hour<12?' صباحاً':(hour<17?' ظهراً':' مساءً'));
+    document.getElementById('tiltVal').textContent = tilt + '°';
+    var azDir = az<=20||az>=340?'شمال':(az<70?'شمال شرق':(az<110?'شرق':(az<160?'جنوب شرق':(az<200?'جنوب':(az<250?'جنوب غرب':(az<290?'غرب':'شمال غرب'))))));
+    document.getElementById('azVal').textContent = az + '° (' + azDir + ')';
+
+    var s = sunAngles(lat, month, hour);
+
+    // panel orientation: normal vector. tilt from horizontal, azimuth from north clockwise
+    var beta = tilt*DEG, gamma = az*DEG;
+    var nx = Math.sin(beta)*Math.sin(gamma);
+    var ny = Math.cos(beta);
+    var nz = -Math.sin(beta)*Math.cos(gamma);
+    var normal = new THREE.Vector3(nx, ny, nz).normalize();
+    // orient panel: its local +Z is the back? We built panel flat (face up = +Y). Rotate so +Y → normal
+    var q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), normal);
+    panelGroup.quaternion.copy(q);
+    normalArrow.position.copy(panelGroup.position);
+    normalArrow.setDirection(normal);
+
+    // sun position in 3D: coords: east=+X, up=+Y, north=-Z
+    var R = 14;
+    var sx = R*Math.cos(s.elev)*Math.sin(s.azDeg*DEG);
+    var sy = R*Math.sin(s.elev);
+    var sz = -R*Math.cos(s.elev)*Math.cos(s.azDeg*DEG);
+    sunMesh.position.set(sx, Math.max(sy, 0.5), sz);
+    sunGlow.position.copy(sunMesh.position);
+    sunLight.position.copy(sunMesh.position);
+    sunLight.target.position.set(0,1,0);
+
+    // ray from sun to panel center
+    var pts = rayGeom.attributes.position.array;
+    pts[0]=sx; pts[1]=Math.max(sy,0.5); pts[2]=sz;
+    pts[3]=0; pts[4]=1.0; pts[5]=0;
+    rayGeom.attributes.position.needsUpdate = true;
+    rayLine.visible = s.elevDeg > 0;
+
+    // incidence angle: cos(theta) = sin(elev)cos(beta) + cos(elev)sin(beta)cos(az_sun - az_panel)
+    var dAz = (s.azDeg - az)*DEG;
+    var cosT = Math.sin(s.elev)*Math.cos(beta) + Math.cos(s.elev)*Math.sin(beta)*Math.cos(dAz);
+    cosT = Math.max(0, Math.min(1, cosT));
+    var incDeg = Math.acos(cosT)/DEG;
+    var effPct = cosT*100;
+
+    document.getElementById('oElev').textContent = s.elevDeg>0 ? s.elevDeg.toFixed(1)+'°' : 'غابت الشمس';
+    document.getElementById('oAz').textContent = s.azDeg.toFixed(0)+'°';
+    document.getElementById('oInc').textContent = s.elevDeg>0 ? incDeg.toFixed(1)+'°' : '—';
+    document.getElementById('oEff').textContent = s.elevDeg>0 ? effPct.toFixed(0)+'%' : '0%';
+
+    var fill = document.getElementById('effFill');
+    fill.style.width = effPct+'%';
+    var ro = document.getElementById('effRo');
+    ro.className = 'ro ' + (effPct>=85?'good':(effPct>=50?'warn':'bad'));
+    fill.style.background = effPct>=85 ? '#16a34a' : (effPct>=50 ? '#d97706' : '#dc2626');
+
+    // compass needle
+    document.getElementById('sunNeedle').style.transform = 'translate(-50%,-100%) rotate('+(s.azDeg)+'deg)';
+
+    // tip: optimal tilt
+    var optTilt = Math.round(lat);
+    document.getElementById('tipBox').innerHTML =
+      '<strong>زاوية الميل المثلى السنوية لمدينتك:</strong> حوالي '+optTilt+'° (تساوي خط العرض تقريباً). ' +
+      'الاتجاه المثلى نحو <strong>الجنوب (Azimuth=180°)</strong>. حالياً كفاءة السقوط = <strong>'+effPct.toFixed(0)+'%</strong>.';
+  }
+
+  ['city','month','hour','tilt','az'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', update);
+    document.getElementById(id).addEventListener('change', update);
+  });
+
+  window.addEventListener('resize', function(){
+    camera.aspect = wrap.clientWidth/wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  update();
+  animate();
+})();
+</script>
+</body>
+</html>
