@@ -806,34 +806,23 @@ footer strong{color:var(--text)}
   initCharts();
 })();
 </script>
-<div style="text-align: center; margin: 40px 20px; padding: 25px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; border: 2px solid #4CAF50;">
-  <h3 style="color: #2e7d32; margin: 0 0 15px 0; font-size: 18px;">☀️ محاكي زوايا السقوط الشمسي — ثلاثي الأبعاد</h3>
-  <p style="color: #388E3C; margin: 0 0 18px 0; font-size: 14px;">سيعرض المحاكي عدد الألواح والمساحة المحسوبة تلقائياً</p>
-  <button onclick="فتحالمحاكي()" style="padding: 12px 30px; background: linear-gradient(90deg, #4CAF50, #2E7D32); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
-    📐 افتح المحاكي مع بيانات النظام
+<div style="text-align:center; margin:40px 20px; padding:25px; background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius:12px; border:2px solid #4CAF50;">
+  <h3 style="color:#2e7d32; margin:0 0 15px 0; font-size:18px;">محاكي زوايا السقوط الشمسي — ثلاثي الأبعاد</h3>
+  <p style="color:#388E3C; margin:0 0 18px 0; font-size:14px;">سيعرض المحاكي عدد الألواح والمساحة المحسوبة تلقائياً</p>
+  <button onclick="open3DSim()" style="padding:12px 30px; background:linear-gradient(90deg,#4CAF50,#2E7D32); color:white; border:none; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer;">
+    افتح المحاكي مع بيانات النظام
   </button>
 </div>
 
 <script>
-function فتحالمحاكي() {
-  // ✅ تأكد من مطابقة المعرفات مع كودك
-  // إذا كانت الأسماء مختلفة أخبرني وأغيرها لك
-  let عددالالواح = document.querySelector('.عدد-الالواح')?.textContent || 
-                   document.getElementById('panels-count')?.textContent ||
-                   document.querySelector('[data-panels]')?.innerText;
-  
-  let المساحةالكلية = document.querySelector('.المساحة-الكلية')?.textContent ||
-                      document.getElementById('total-area')?.textContent ||
-                      document.querySelector('[data-area]')?.innerText;
-
-  // تنظيف القيم من أي نص زائد
-  عددالالواح = Math.round(parseFloat(عددالالواح)) || 10;
-  المساحةالكلية = parseFloat(المساحةالكلية) || 16;
-
-  // فتح المحاكي مع إرسال القيم
-  const الرابط = `3d.html?لوحات=${عددالالواح}&مساحة=${المساحةالكلية}`;
-  window.open(الرابط, '_blank');
+function open3DSim(){
+  // يجلب عدد الألواح من النتيجة ويحسب المساحة (كل لوح 2.2 م²)
+  var panelsText = document.getElementById('kpiPanels').textContent;
+  var panels = parseInt(panelsText.replace(/[^0-9]/g,'')) || 10;
+  var area = panels * 2.2;
+  window.open('3d.html?panels=' + panels + '&area=' + area, '_blank');
 }
+</script>
 </script>
 </div>
 </body>
