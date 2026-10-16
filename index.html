@@ -627,6 +627,7 @@ footer strong{color:var(--text)}
 
     if(demand<=0 || price<=0) return;
     var r = computeFor(demand, sun, price, type);
+window.__solar = { panels: r.panels, area: r.panels * C.panelArea };
 
     // KPIs
     document.getElementById('kpiKwp').textContent = fmt(r.kwpActual,2);
@@ -809,19 +810,16 @@ footer strong{color:var(--text)}
 <div style="text-align:center; margin:40px 20px; padding:25px; background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius:12px; border:2px solid #4CAF50;">
   <h3 style="color:#2e7d32; margin:0 0 15px 0; font-size:18px;">محاكي زوايا السقوط الشمسي — ثلاثي الأبعاد</h3>
   <p style="color:#388E3C; margin:0 0 18px 0; font-size:14px;">سيعرض المحاكي عدد الألواح والمساحة المحسوبة تلقائياً</p>
-  <button onclick="open3DSim()" style="padding:12px 30px; background:linear-gradient(90deg,#4CAF50,#2E7D32); color:white; border:none; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer;">
+  <button onclick="openSimulator()" ...> style="padding:12px 30px; background:linear-gradient(90deg,#4CAF50,#2E7D32); color:white; border:none; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer;">
     افتح المحاكي مع بيانات النظام
   </button>
 </div>
 
 <script>
-function فتحالمحاكي() {
-  // استبدل المعرفات بما يطابق كودك
-  const عددالالواح = 19; // أو اجلبه من العنصر
-  const المساحة = عددالالواح * 2.2;
-  window.open(`3d.html?panels=${عددالالواح}&area=${المساحة}`, '_blank');
+function openSimulator() {
+  var s = window.__solar || { panels: 10, area: 22 };
+  window.open('3d.html?panels=' + s.panels + '&area=' + s.area.toFixed(2), '_blank');
 }
-</script>
 </script>
 </div>
 </body>
