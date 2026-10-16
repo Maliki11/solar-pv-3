@@ -815,11 +815,11 @@ footer strong{color:var(--text)}
 </div>
 
 <script>
-function open3DSim(){
-  // استبدل 'kpiPanels' بالمعرف الفعلي في كودك
-  var panels = parseInt(document.getElementById('kpiPanels').textContent) || 10;
-  var area = panels * 2.2;
-  window.open('3d.html?panels=' + panels + '&area=' + area, '_blank');
+function فتحالمحاكي() {
+  // استبدل المعرفات بما يطابق كودك
+  const عددالالواح = 19; // أو اجلبه من العنصر
+  const المساحة = عددالالواح * 2.2;
+  window.open(`3d.html?panels=${عددالالواح}&area=${المساحة}`, '_blank');
 }
 </script>
 </script>
