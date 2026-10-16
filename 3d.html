@@ -12,8 +12,7 @@
 <style>
 :root{
   --bg:#fefcf8; --card:#ffffff; --text:#1a2332; --muted:#64748b;
-  --accent:#ea580c; --accent-soft:rgba(234,88,12,.10);
-  --accent2:#16a34a; --accent3:#0e7490; --warn:#d97706; --bad:#dc2626;
+  --accent:#ea580c; --accent2:#16a34a; --warn:#d97706; --bad:#dc2626;
   --border:rgba(15,23,42,.08); --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -21,40 +20,33 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);ove
 .layout{display:grid;grid-template-columns:360px 1fr;height:100vh}
 @media(max-width:860px){.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:auto;overflow-y:auto}#canvasWrap{height:60vh}}
 .panel{background:var(--card);border-left:1px solid var(--border);padding:22px;overflow-y:auto;box-shadow:var(--shadow)}
-.panel h1{font-size:20px;font-weight:900;margin-bottom:4px;color:var(--text)}
-.panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:18px}
-.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent3);text-decoration:none;font-weight:700;margin-bottom:14px}
-.back-link:hover{text-decoration:underline}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#0e7490;text-decoration:none;font-weight:700;margin-bottom:14px}
+h1{font-size:20px;font-weight:900;margin-bottom:4px}
+.sub{font-size:12.5px;color:var(--muted);margin-bottom:18px}
 .sec{margin-bottom:20px}
 .sec-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .sec-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px}
 .slider-row{margin-bottom:14px}
 .slider-row label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#334155;margin-bottom:6px}
-.slider-row label .val{color:var(--accent);font-variant-numeric:tabular-nums}
+.val{color:var(--accent);font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:999px;background:#e5e7eb;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 6px rgba(234,88,12,.4)}
-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13.5px;background:#fbfbf9;margin-bottom:10px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font:inherit;margin-bottom:10px}
 .readout{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ro{background:#faf9f5;border:1px solid var(--border);border-radius:10px;padding:10px 12px}
 .ro .lbl{font-size:11px;color:var(--muted);font-weight:700}
 .ro .v{font-size:17px;font-weight:900;margin-top:2px;font-variant-numeric:tabular-nums}
-.ro.good .v{color:var(--accent2)}
-.ro.warn .v{color:var(--warn)}
-.ro.bad .v{color:var(--bad)}
+.good .v{color:var(--accent2)}.warn .v{color:var(--warn)}.bad .v{color:var(--bad)}
 .eff-bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:6px}
 .eff-fill{height:100%;border-radius:999px;transition:width .3s,background .3s}
-.tip{background:var(--accent-soft);border:1px solid rgba(234,88,12,.25);border-radius:10px;padding:11px 13px;font-size:12.5px;color:#9a3412;line-height:1.7;margin-top:14px}
+.tip{background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.2);border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-top:14px}
 .tip strong{color:var(--accent)}
-#canvasWrap{position:relative;background:linear-gradient(180deg,#87CEEB 0%,#B0E0E6 60%,#F5DEB3 100%)}
+#canvasWrap{position:relative;background:linear-gradient(180deg,#87CEEB 0%,#E0F0FF 60%,#F5F5DC 100%)}
 #canvasWrap canvas{display:block}
-.hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:7px 16px;border-radius:999px;font-size:12px;color:var(--muted);font-weight:700;pointer-events:none}
-.compass{position:absolute;top:16px;left:16px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--muted);box-shadow:var(--shadow)}
-.compass span{position:absolute}
-.compass .n{top:4px;color:var(--bad)}
-.compass .s{bottom:4px}
-.compass .e{left:6px}
-.compass .w{right:6px}
-.sun-needle{position:absolute;top:50%;left:50%;width:2px;height:24px;background:var(--accent);transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);border-radius:2px;transition:transform .2s}
+.hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.85);padding:7px 16px;border-radius:999px;font-size:12px;color:var(--muted);font-weight:700;pointer-events:none}
+.compass{position:absolute;top:16px;left:16px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px}
+.compass span{position:absolute}.n{top:4px;color:var(--bad)}.s{bottom:4px}.e{left:6px}.w{right:6px}
+.sun-needle{position:absolute;top:50%;left:50%;width:2px;height:24px;background:var(--accent);transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);border-radius:2px}
 .sun-needle::after{content:'';position:absolute;top:-6px;left:-4px;width:10px;height:10px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #f59e0b}
 #systemInfo{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);padding:15px;border-radius:10px;margin-bottom:18px;border-right:3px solid #4CAF50;}
 </style>
@@ -62,326 +54,338 @@ select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radiu
 <body>
 <div class="layout">
   <div class="panel">
-    <a class="back-link" href="index.html">← العودة للحاسبة الرئيسية</a>
+    <a class="back-link" href="index.html">← العودة للحاسبة</a>
+    
     <div id="systemInfo">
-      <h4 style="margin:0 0 10px 0;color:#2e7d32;font-size:14px;">بيانات النظام المحسوب</h4>
-      <p style="margin:5px 0;font-size:13px;"><strong>عدد الألواح:</strong> <span id="panelCount">10</span> لوح</p>
-      <p style="margin:5px 0;font-size:13px;"><strong>المساحة الكلية:</strong> <span id="totalArea">16.00</span> م²</p>
-      <p style="margin:8px 0 0 0;font-size:11px;color:#666;">مرسل من حاسبة النظام الشمسي</p>
+      <h4 style="margin:0 0 10px 0;color:#2e7d32;">📋 بيانات النظام</h4>
+      <p style="margin:5px 0;"><strong>عدد الألواح:</strong> <span id="panelCount">10</span></p>
+      <p style="margin:5px 0;"><strong>المساحة الكلية:</strong> <span id="totalArea">16.00</span> م²</p>
     </div>
+    
     <h1>محاكي زوايا السقوط الشمسي</h1>
-    <div class="sub">استكشف تأثير زاوية الميل والإتجاه على كفاءة الألواح</div>
+    <div class="sub">استكشف تأثير الميل والإتجاه على الكفاءة</div>
+    
     <div class="sec">
       <div class="sec-title">الموقع والوقت</div>
       <select id="city">
-        <option value="24.7">الرياض (خط العرض 24.7°)</option>
-        <option value="21.5">مكة المكرمة (21.5°)</option>
-        <option value="21.5">جدة (21.5°)</option>
+        <option value="24.7">الرياض (24.7°)</option>
+        <option value="21.5">مكة (21.5°)</option>
         <option value="24.5" selected>المدينة المنورة (24.5°)</option>
+        <option value="21.5">جدة (21.5°)</option>
         <option value="26.4">بريدة (26.4°)</option>
-        <option value="27.5">حائل (27.5°)</option>
-        <option value="27.0">تبوك (27.0°)</option>
         <option value="18.2">نجران (18.2°)</option>
       </select>
       <div class="slider-row">
-        <label>شهر السنة <span class="val" id="monthVal">6 (يونيو)</span></label>
+        <label>الشهر <span class="val" id="monthVal">6 (يونيو)</span></label>
         <input type="range" id="month" min="1" max="12" value="6" step="1">
       </div>
       <div class="slider-row">
-        <label>وقت اليوم <span class="val" id="hourVal">12:00 ظهراً</span></label>
+        <label>الوقت <span class="val" id="hourVal">12:00</span></label>
         <input type="range" id="hour" min="6" max="18" value="12" step="0.5">
       </div>
     </div>
+    
     <div class="sec">
-      <div class="sec-title">زوايا تركيب الألواح</div>
+      <div class="sec-title">زوايا التركيب</div>
       <div class="slider-row">
-        <label>زاوية الميل Tilt <span class="val" id="tiltVal">25°</span></label>
+        <label>زاوية الميل <span class="val" id="tiltVal">25°</span></label>
         <input type="range" id="tilt" min="0" max="60" value="25" step="1">
       </div>
       <div class="slider-row">
-        <label>زاوية الإتجاه (الجنوب=180°) <span class="val" id="azVal">180° (جنوب)</span></label>
+        <label>الإتجاه (الجنوب=180°) <span class="val" id="azVal">180°</span></label>
         <input type="range" id="az" min="0" max="360" value="180" step="5">
       </div>
     </div>
+    
     <div class="sec">
-      <div class="sec-title">النتائج الفعلية</div>
+      <div class="sec-title">النتائج</div>
       <div class="readout">
         <div class="ro"><div class="lbl">ارتفاع الشمس</div><div class="v" id="oElev">—</div></div>
         <div class="ro"><div class="lbl">إتجاه الشمس</div><div class="v" id="oAz">—</div></div>
         <div class="ro"><div class="lbl">زاوية السقوط</div><div class="v" id="oInc">—</div></div>
-        <div class="ro good" id="effRo"><div class="lbl">كفاءة السقوط</div><div class="v" id="oEff">—</div></div>
+        <div class="ro good" id="effRo"><div class="lbl">الكفاءة</div><div class="v" id="oEff">—</div></div>
       </div>
-      <div class="eff-bar"><div class="eff-fill" id="effFill" style="width:0%"></div></div>
-      <div class="tip" id="tipBox"><strong>نصيحة:</strong> وجّه الألواح نحو الجنوب (180°) واجعل زاوية الميل قريبة من خط عرض مدينتك.</div>
+      <div class="eff-bar"><div class="eff-fill" id="effFill"></div></div>
+      <div class="tip" id="tipBox"><strong>نصيحة:</strong> وجّه نحو الجنوب (180°) وميل يساوي خط العرض لأفضل نتيجة.</div>
     </div>
   </div>
+  
   <div id="canvasWrap">
     <div class="compass">
       <span class="n">ش</span><span class="s">ج</span><span class="e">ق</span><span class="w">غ</span>
       <div class="sun-needle" id="sunNeedle"></div>
     </div>
-    <div class="hint">اسحب للدوران • مرّر للتكبير والتصغير</div>
+    <div class="hint">اسحب للدوران • مرّر للتكبير</div>
   </div>
 </div>
 
 <script>
 (function(){
   "use strict";
-
+  
+  // استقبال البيانات من index.html
   const params = new URLSearchParams(window.location.search);
   const panelCount = parseInt(params.get('panels')) || 10;
   const totalArea = parseFloat(params.get('area')) || 16;
+  
   document.getElementById('panelCount').textContent = panelCount;
   document.getElementById('totalArea').textContent = totalArea.toFixed(2);
-
+  
   const DEG = Math.PI / 180;
   const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-
-  // ===== قوام واقعي مولّد داخل الكود (لا يحتاج صور خارجية) =====
-  function makePanelTexture(){
-    const c = document.createElement('canvas'); c.width=512; c.height=256;
-    const x = c.getContext('2d');
-    const g = x.createLinearGradient(0,0,512,256);
-    g.addColorStop(0,'#15255e'); g.addColorStop(0.5,'#0d3a8a'); g.addColorStop(1,'#1a237e');
-    x.fillStyle=g; x.fillRect(0,0,512,256);
-    x.strokeStyle='rgba(190,210,235,0.55)'; x.lineWidth=2.5;
-    for(let i=0;i<=6;i++){x.beginPath();x.moveTo(i*512/6,0);x.lineTo(i*512/6,256);x.stroke();}
-    for(let j=0;j<=4;j++){x.beginPath();x.moveTo(0,j*256/4);x.lineTo(512,j*256/4);x.stroke();}
-    x.strokeStyle='rgba(210,225,245,0.35)'; x.lineWidth=4;
-    for(let k=1;k<3;k++){x.beginPath();x.moveTo(0,k*256/3);x.lineTo(512,k*256/3);x.stroke();}
-    const gl = x.createLinearGradient(0,0,512,0);
-    gl.addColorStop(0,'rgba(255,255,255,0)'); gl.addColorStop(0.5,'rgba(255,255,255,0.12)'); gl.addColorStop(1,'rgba(255,255,255,0)');
-    x.fillStyle=gl; x.fillRect(0,0,512,256);
-    const t = new THREE.CanvasTexture(c); t.anisotropy=4; return t;
-  }
-
-  function makeRoofTexture(){
-    const c = document.createElement('canvas'); c.width=256; c.height=256;
-    const x = c.getContext('2d');
-    x.fillStyle='#b8a990'; x.fillRect(0,0,256,256);
-    for(let i=0;i<3000;i++){
-      const r=Math.random()*30-15;
-      x.fillStyle='rgba('+(184+r)+','+(169+r)+','+(144+r)+',0.4)';
-      x.fillRect(Math.random()*256,Math.random()*256,2,2);
-    }
-    x.strokeStyle='rgba(120,105,85,0.5)'; x.lineWidth=1.5;
-    for(let i=0;i<=4;i++){x.beginPath();x.moveTo(0,i*64);x.lineTo(256,i*64);x.stroke();x.beginPath();x.moveTo(i*64,0);x.lineTo(i*64,256);x.stroke();}
-    const t = new THREE.CanvasTexture(c);
-    t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(6,6); return t;
-  }
-
-  function makeSunSprite(){
-    const c = document.createElement('canvas'); c.width=256; c.height=256;
-    const x = c.getContext('2d');
-    const g = x.createRadialGradient(128,128,0,128,128,128);
-    g.addColorStop(0,'rgba(255,255,220,1)');
-    g.addColorStop(0.25,'rgba(255,210,80,0.9)');
-    g.addColorStop(0.6,'rgba(255,160,30,0.35)');
-    g.addColorStop(1,'rgba(255,140,0,0)');
-    x.fillStyle=g; x.fillRect(0,0,256,256);
-    const t = new THREE.CanvasTexture(c);
-    return new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
-  }
-
-  function createRealisticPanel(w, h, panelTex){
-    const g = new THREE.Group();
-    const frameMat = new THREE.MeshStandardMaterial({color:0xc8ccd0, metalness:0.85, roughness:0.35});
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(w+0.06, 0.05, h+0.06), frameMat);
-    frame.castShadow=true; frame.receiveShadow=true;
-    g.add(frame);
-    const cellMat = new THREE.MeshStandardMaterial({map:panelTex, metalness:0.25, roughness:0.18});
-    const cell = new THREE.Mesh(new THREE.PlaneGeometry(w, h), cellMat);
-    cell.rotation.x = -Math.PI/2;
-    cell.position.y = 0.031;
-    cell.receiveShadow=true;
-    g.add(cell);
-    return g;
-  }
-
-  function createPanelsArray(count, areaTotal, panelTex){
+  
+  // === دالة إنشاء لوح واحد مع محور دوران صحيح ===
+  function createSinglePanel(width, height, thickness, baseHeight) {
+    // المجموعة: محور الدوران في الأسفل وليس في المنتصف ✅
     const group = new THREE.Group();
-    const panelW=1.7, panelH=1.0, gap=0.4;
-    // ترتيب بصفوف — كل صف 4 ألواح كحد أقصى
-    const cols = Math.min(4, count);
-    const rows = Math.ceil(count/cols);
-    const areaPerPanel = areaTotal/count;
-    const scale = Math.sqrt(areaPerPanel/(panelW*panelH));
-    const w=panelW*scale, h=panelH*scale;
-    const baseHeight=0.6;
-    const postMat = new THREE.MeshStandardMaterial({color:0x707880, metalness:0.7, roughness:0.4});
-    // توسيط المجموعة عند نقطة الأصل — الدوران يدور حول مركز الألواح (لا يغرق في الأرض)
-    const totalW=(cols-1)*(w+gap), totalD=(rows-1)*(h+gap);
-    let idx=0;
-    for(let r=0;r<rows && idx<count;r++){
-      for(let c=0;c<cols && idx<count;c++){
-        const panel = createRealisticPanel(w, h, panelTex);
-        panel.position.set(-totalW/2 + c*(w+gap), 0, -totalD/2 + r*(h+gap));
-        group.add(panel);
-        // عمودا دعم أسفل كل لوح (يصل للأرض)
-        for(let p=-1;p<=1;p+=2){
-          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,baseHeight,8), postMat);
-          post.position.set(panel.position.x + p*w*0.35, -baseHeight/2, panel.position.z);
-          post.castShadow=true;
-          group.add(post);
-        }
+    
+    // إطار الألمنيوم
+    const frameMat = new THREE.MeshStandardMaterial({color:0x9CA3AF, metalness:0.8, roughness:0.2});
+    const frameH = new THREE.Mesh(new THREE.BoxGeometry(width+0.06, 0.05, 0.06), frameMat);
+    const frameV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, height+0.06), frameMat);
+    
+    // سطح اللوح (زجاجي)
+    const panelMat = new THREE.MeshStandardMaterial({
+      color:0x1E88E5, metalness:0.1, roughness:0.3, transparent:true, opacity:0.9
+    });
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(width, 0.03, height), panelMat);
+    panel.position.y = 0.025;
+    
+    // شبكة الخلايا
+    const gridLines = new THREE.Group();
+    const lineMat = new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:true, opacity:0.4});
+    for(let i=0; i<=4; i++){
+      const l = new THREE.Mesh(new THREE.BoxGeometry(width, 0.002, 0.008), lineMat);
+      l.position.z = -height/2 + (height/4)*i;
+      l.position.y = 0.04;
+      gridLines.add(l);
+    }
+    for(let i=0; i<=3; i++){
+      const l = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.002, height), lineMat);
+      l.position.x = -width/2 + (width/3)*i;
+      l.position.y = 0.04;
+      gridLines.add(l);
+    }
+    
+    // تجميع اللوح
+    frameH.position.set(0, 0.025, height/2);
+    group.add(frameH.clone());
+    frameH.position.z = -height/2;
+    group.add(frameH.clone());
+    frameV.position.set(width/2, 0.025, 0);
+    group.add(frameV.clone());
+    frameV.position.x = -width/2;
+    group.add(frameV.clone());
+    group.add(panel);
+    group.add(gridLines);
+    
+    // عمود الدعم
+    const poleMat = new THREE.MeshStandardMaterial({color:0x6B7280, metalness:0.7, roughness:0.3});
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, baseHeight, 8), poleMat);
+    pole.position.y = -baseHeight/2;
+    group.add(pole);
+    
+    // ✅ وضع اللوح فوق العمود مباشرة — لا غوص بعد الآن!
+    group.position.y = baseHeight;
+    
+    return group;
+  }
+  
+  // === دالة إنشاء المجموعة الكلية — صفوف من 4 ألواح ===
+  function createSolarArray(count, areaTotal) {
+    const rootGroup = new THREE.Group(); // هذا يدور بالكامل معاً
+    
+    const panelW = 1.6;
+    const panelH = 1.0;
+    const gapX = 0.8; // مسافة بين الألواح في الصف
+    const gapZ = 1.0; // مسافة بين الصفوف
+    const baseHeight = 0.6; // ارتفاع ثابت عن الأرض ✅
+    
+    // تعديل الحجم حسب المساحة
+    const areaPer = areaTotal / count;
+    const scale = Math.sqrt(areaPer / (panelW * panelH));
+    const w = panelW * scale;
+    const h = panelH * scale;
+    
+    // صفوف من 4 ألواح ✅
+    const perRow = 4;
+    const rows = Math.ceil(count / perRow);
+    
+    // توسيط المجموعة
+    const totalWidth = (perRow - 1) * (w + gapX);
+    const totalDepth = (rows - 1) * (h + gapZ);
+    const startX = -totalWidth / 2;
+    const startZ = -totalDepth / 2;
+    
+    let idx = 0;
+    for(let r=0; r<rows && idx<count; r++){
+      for(let c=0; c<perRow && idx<count; c++){
+        const panel = createSinglePanel(w, h, 0.05, baseHeight);
+        panel.position.x = startX + c * (w + gapX);
+        panel.position.z = startZ + r * (h + gapZ);
+        rootGroup.add(panel);
         idx++;
       }
     }
-    // رفع المجموعة كاملة — الدوران حول مركز الألواح لا يغرقها في الأرض
-    group.position.y = baseHeight;
-    return group;
+    return rootGroup;
   }
-
+  
+  // === إعداد المشهد ===
   const wrap = document.getElementById('canvasWrap');
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xb0d4e8, 25, 60);
-
+  scene.background = new THREE.Color(0x87CEEB);
+  
   const camera = new THREE.PerspectiveCamera(45, wrap.clientWidth/wrap.clientHeight, 0.1, 200);
-  camera.position.set(9, 6, 11);
-
-  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  camera.position.set(7, 5, 9);
+  
+  const renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   wrap.appendChild(renderer.domElement);
-
+  
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping=true;
-  controls.maxPolarAngle=Math.PI/2.15;
-  controls.minDistance=3; controls.maxDistance=35;
-
-  const hemi = new THREE.HemisphereLight(0x87ceeb, 0xd4c5a0, 0.55);
-  scene.add(hemi);
-
-  const sunLight = new THREE.DirectionalLight(0xfff2cc, 1.4);
-  sunLight.castShadow=true;
-  sunLight.shadow.mapSize.set(2048,2048);
-  sunLight.shadow.camera.left=-15; sunLight.shadow.camera.right=15;
-  sunLight.shadow.camera.top=15; sunLight.shadow.camera.bottom=-15;
-  sunLight.shadow.camera.near=0.5; sunLight.shadow.camera.far=60;
-  sunLight.shadow.bias=-0.0005;
+  controls.enableDamping = true;
+  controls.maxPolarAngle = Math.PI / 2.2;
+  controls.minDistance = 3;
+  
+  // إضاءة
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const sunLight = new THREE.DirectionalLight(0xffffcc, 1.5);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.left = -15;
+  sunLight.shadow.camera.right = 15;
+  sunLight.shadow.camera.top = 15;
+  sunLight.shadow.camera.bottom = -15;
   scene.add(sunLight);
-  scene.add(sunLight.target);
-
-  const sunSprite = makeSunSprite();
-  sunSprite.scale.set(6,6,1);
-  scene.add(sunSprite);
-
-  const roofTex = makeRoofTexture();
-  const roof = new THREE.Mesh(
-    new THREE.BoxGeometry(20, 0.3, 16),
-    new THREE.MeshStandardMaterial({map:roofTex, roughness:0.9})
+  
+  // شمس مرئية
+  const sunSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.8, 32, 32),
+    new THREE.MeshBasicMaterial({color:0xFFD700})
   );
-  roof.position.y=0.15; roof.receiveShadow=true;
-  scene.add(roof);
-
-  const edgeMat = new THREE.MeshStandardMaterial({color:0x8a7d68, roughness:0.8});
-  const edge = new THREE.Mesh(new THREE.BoxGeometry(20.4, 0.5, 0.3), edgeMat);
-  edge.position.set(0, 0.1, 8.15); scene.add(edge);
-  const edge2 = edge.clone(); edge2.position.z=-8.15; scene.add(edge2);
-
-  const grid = new THREE.GridHelper(20, 20, 0x9a8c72, 0xc4b89e);
-  grid.position.y=0.31; scene.add(grid);
-
-  const panelTex = makePanelTexture();
-  let panelsGroup = createPanelsArray(panelCount, totalArea, panelTex);
-  scene.add(panelsGroup);
-
-  const citySel=document.getElementById('city'), monthIn=document.getElementById('month'),
-        hourIn=document.getElementById('hour'), tiltIn=document.getElementById('tilt'), azIn=document.getElementById('az');
-  const monthVal=document.getElementById('monthVal'), hourVal=document.getElementById('hourVal'),
-        tiltVal=document.getElementById('tiltVal'), azVal=document.getElementById('azVal'),
-        oElev=document.getElementById('oElev'), oAz=document.getElementById('oAz'),
-        oInc=document.getElementById('oInc'), oEff=document.getElementById('oEff'),
-        effFill=document.getElementById('effFill'), effRo=document.getElementById('effRo'),
-        tipBox=document.getElementById('tipBox'), sunNeedle=document.getElementById('sunNeedle');
-
+  scene.add(sunSphere);
+  
+  // أرض
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 40),
+    new THREE.MeshStandardMaterial({color:0xF5F5DC, roughness:0.9})
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  scene.add(new THREE.GridHelper(40, 40, 0xCCCCCC, 0xE5E5E5));
+  
+  // إنشاء مجموعة الألواح
+  const solarArray = createSolarArray(panelCount, totalArea);
+  scene.add(solarArray);
+  
+  // عناصر التحكم
+  const citySel = document.getElementById('city');
+  const monthIn = document.getElementById('month');
+  const hourIn = document.getElementById('hour');
+  const tiltIn = document.getElementById('tilt');
+  const azIn = document.getElementById('az');
+  
+  const monthVal = document.getElementById('monthVal');
+  const hourVal = document.getElementById('hourVal');
+  const tiltVal = document.getElementById('tiltVal');
+  const azVal = document.getElementById('azVal');
+  const oElev = document.getElementById('oElev');
+  const oAz = document.getElementById('oAz');
+  const oInc = document.getElementById('oInc');
+  const oEff = document.getElementById('oEff');
+  const effFill = document.getElementById('effFill');
+  const effRo = document.getElementById('effRo');
+  const tipBox = document.getElementById('tipBox');
+  const sunNeedle = document.getElementById('sunNeedle');
+  
   function recalc(){
-    const lat=parseFloat(citySel.value)*DEG;
-    const month=parseInt(monthIn.value);
-    const hour=parseFloat(hourIn.value);
-    const tilt=parseFloat(tiltIn.value)*DEG;
-    const az=parseFloat(azIn.value)*DEG;
-
-    monthVal.textContent = month+' ('+MONTHS[month-1]+')';
-    hourVal.textContent = hour.toFixed(1).replace('.',':')+(hour<12?' صباحاً':' مساءً');
-    tiltVal.textContent = tiltIn.value+'°';
-    azVal.textContent = azIn.value+'°';
-
-    const dayOfYear=(month-1)*30+15;
-    const decl=23.45*Math.sin((360/365)*(284+dayOfYear)*DEG)*DEG;
-    const hourAngle=(hour-12)*15*DEG;
-
-    const sinElev=Math.sin(decl)*Math.sin(lat)+Math.cos(decl)*Math.cos(lat)*Math.cos(hourAngle);
-    const elevation=Math.asin(Math.max(-1,Math.min(1,sinElev)));
-
+    const lat = parseFloat(citySel.value) * DEG;
+    const month = parseInt(monthIn.value);
+    const hour = parseFloat(hourIn.value);
+    const tilt = parseFloat(tiltIn.value) * DEG;
+    const az = parseFloat(azIn.value) * DEG;
+    
+    monthVal.textContent = `${month} (${MONTHS[month-1]})`;
+    hourVal.textContent = `${hour.toFixed(1).replace('.', ':')}`;
+    tiltVal.textContent = `${tiltIn.value}°`;
+    azVal.textContent = `${azIn.value}°`;
+    
+    // حساب مسار الشمس
+    const dayOfYear = (month-1)*30 + 15;
+    const decl = 23.45 * Math.sin((360/365)*(284+dayOfYear)*DEG) * DEG;
+    const hourAngle = (hour - 12) * 15 * DEG;
+    
+    const sinElev = Math.sin(decl)*Math.sin(lat) + Math.cos(decl)*Math.cos(lat)*Math.cos(hourAngle);
+    const elev = Math.asin(Math.max(-1, Math.min(1, sinElev)));
+    
     let sunAz;
-    if(elevation>0){
-      const cosAz=(Math.sin(decl)-Math.sin(lat)*Math.sin(elevation))/(Math.cos(lat)*Math.cos(elevation));
-      sunAz=Math.acos(Math.max(-1,Math.min(1,cosAz)));
-      if(hour>12) sunAz=2*Math.PI-sunAz;
-    } else sunAz=Math.PI;
-
-    const cosInc=Math.sin(elevation)*Math.cos(tilt)+Math.cos(elevation)*Math.sin(tilt)*Math.cos(sunAz-az);
-    const incAngle=Math.acos(Math.max(0,Math.min(1,cosInc)));
-    const efficiency=Math.max(0,cosInc);
-
-    oElev.textContent=(elevation/DEG).toFixed(1)+'°';
-    oAz.textContent=(sunAz/DEG).toFixed(1)+'°';
-    oInc.textContent=(incAngle/DEG).toFixed(1)+'°';
-    oEff.textContent=(efficiency*100).toFixed(0)+'%';
-
-    effFill.style.width=(efficiency*100)+'%';
-    if(efficiency>=0.85){effFill.style.background='#22c55e';effRo.className='ro good';}
-    else if(efficiency>=0.6){effFill.style.background='#f59e0b';effRo.className='ro warn';}
-    else{effFill.style.background='#ef4444';effRo.className='ro bad';}
-
-    panelsGroup.rotation.x=-tilt;
-    panelsGroup.rotation.y=Math.PI-az;
-
-    const D=22;
-    const sx=D*Math.cos(sunAz-Math.PI/2)*Math.cos(elevation);
-    const sy=D*Math.sin(elevation);
-    const sz=D*Math.sin(sunAz-Math.PI/2)*Math.cos(elevation);
-    sunSprite.position.set(sx,Math.max(sy,1),sz);
-    sunLight.position.set(sx,Math.max(sy,1),sz);
-    sunLight.target.position.set(0,0.6,0);
-
-    const dayFactor=Math.max(0.15, Math.sin(elevation));
-    sunLight.intensity=0.4+dayFactor*1.4;
-    hemi.intensity=0.3+dayFactor*0.4;
-
-    if(elevation<0.2){ scene.fog.color.setHex(0xe8a878); }
-    else { scene.fog.color.setHex(0xb0d4e8); }
-
-    sunNeedle.style.transform='translate(-50%,-100%) rotate('+((sunAz/DEG)-90)+'deg)';
-
+    if(elev > 0){
+      const cosAz = (Math.sin(decl) - Math.sin(lat)*Math.sin(elev)) / (Math.cos(lat)*Math.cos(elev));
+      sunAz = Math.acos(Math.max(-1, Math.min(1, cosAz)));
+      if(hour > 12) sunAz = 2*Math.PI - sunAz;
+    } else {
+      sunAz = Math.PI;
+    }
+    
+    const cosInc = Math.sin(elev)*Math.cos(tilt) + Math.cos(elev)*Math.sin(tilt)*Math.cos(sunAz - az);
+    const efficiency = Math.max(0, cosInc);
+    
+    // تحديث القراءات
+    oElev.textContent = (elev/DEG).toFixed(1)+'°';
+    oAz.textContent = (sunAz/DEG).toFixed(1)+'°';
+    oInc.textContent = (Math.acos(Math.max(0,cosInc))/DEG).toFixed(1)+'°';
+    oEff.textContent = (efficiency*100).toFixed(0)+'%';
+    
+    effFill.style.width = (efficiency*100)+'%';
+    if(efficiency >= 0.85){ effFill.style.background='#22c55e'; effRo.className='ro good'; }
+    else if(efficiency >= 0.6){ effFill.style.background='#f59e0b'; effRo.className='ro warn'; }
+    else { effFill.style.background='#ef4444'; effRo.className='ro bad'; }
+    
+    // ✅ تصليح الدوران نهائياً — لا انقلاب ولا غوص!
+    solarArray.rotation.x = -tilt;   // الميل للأعلى حول المحور الأفقي
+    solarArray.rotation.y = Math.PI - az; // الإتجاه: 180°=جنوب ✅
+    
+    // موقع الشمس
+    const sunDist = 20;
+    sunSphere.position.set(
+      sunDist * Math.cos(sunAz - Math.PI/2) * Math.cos(elev),
+      sunDist * Math.sin(elev),
+      sunDist * Math.sin(sunAz - Math.PI/2) * Math.cos(elev)
+    );
+    sunLight.position.copy(sunSphere.position);
+    sunLight.intensity = Math.max(0.3, Math.sin(elev) * 2);
+    
+    // إبرة البوصلة
+    sunNeedle.style.transform = `translate(-50%, -100%) rotate(${(sunAz/DEG)-90}deg)`;
+    
+    // نصيحة
     let tip;
-    if(elevation<5*DEG) tip='الشمس منخفضة جداً — الكفاءة ضعيفة.';
-    else if(efficiency<0.5) tip='الكفاءة منخفضة. حاول توجيه الألواح نحو الجنوب (180°).';
-    else if(efficiency<0.75) tip='أداء مقبول — يمكن تحسينه بضبط الزاوية.';
-    else tip='أداء ممتاز! الزاوية قريبة من المثالية.';
-    tipBox.innerHTML='<strong>التقييم:</strong> '+tip;
+    if(elev < 5*DEG) tip = '🌅 الشمس منخفضة جداً.';
+    else if(efficiency < 0.5) tip = '⚠️ الكفاءة منخفضة — وجّه نحو الجنوب.';
+    else if(efficiency < 0.75) tip = '✅ أداء مقبول.';
+    else tip = '🌟 أداء ممتاز!';
+    tipBox.innerHTML = `<strong>التقييم:</strong> ${tip}`;
   }
-
-  citySel.addEventListener('change',recalc);
-  monthIn.addEventListener('input',recalc);
-  hourIn.addEventListener('input',recalc);
-  tiltIn.addEventListener('input',recalc);
-  azIn.addEventListener('input',recalc);
-
-  function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene,camera);
-  }
-  recalc(); animate();
-
-  window.addEventListener('resize',()=>{
-    camera.aspect=wrap.clientWidth/wrap.clientHeight;
+  
+  citySel.addEventListener('change', recalc);
+  monthIn.addEventListener('input', recalc);
+  hourIn.addEventListener('input', recalc);
+  tiltIn.addEventListener('input', recalc);
+  azIn.addEventListener('input', recalc);
+  
+  function animate(){ requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+  recalc();
+  animate();
+  
+  window.addEventListener('resize', ()=>{
+    camera.aspect = wrap.clientWidth/wrap.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(wrap.clientWidth,wrap.clientHeight);
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
   });
 })();
 </script>
