@@ -816,9 +816,8 @@ footer strong{color:var(--text)}
 
 <script>
 function open3DSim(){
-  // يجلب عدد الألواح من النتيجة ويحسب المساحة (كل لوح 2.2 م²)
-  var panelsText = document.getElementById('kpiPanels').textContent;
-  var panels = parseInt(panelsText.replace(/[^0-9]/g,'')) || 10;
+  // استبدل 'kpiPanels' بالمعرف الفعلي في كودك
+  var panels = parseInt(document.getElementById('kpiPanels').textContent) || 10;
   var area = panels * 2.2;
   window.open('3d.html?panels=' + panels + '&area=' + area, '_blank');
 }
