@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاكي زوايا السقوط الشمسي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Tajawal,sans-serif;overflow:hidden}
+.layout{display:grid;grid-template-columns:340px 1fr;height:100vh}
+.panel{background:#fff;border-left:1px solid #eee;padding:20px;overflow-y:auto}
+.back-link{color:#0e7490;text-decoration:none;margin-bottom:15px;display:inline-block}
+h1{font-size:18px;margin-bottom:5px}
+.sub{color:#666;font-size:13px;margin-bottom:20px}
+.sec{margin-bottom:20px}
+.sec-title{font-weight:bold;margin-bottom:10px;color:#ea580c}
+select{width:100%;padding:8px;margin-bottom:10px;font-family:inherit;border:1px solid #ddd;border-radius:6px}
+.slider-row{margin-bottom:12px}
+label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.val{color:#ea580c;font-weight:bold}
+input[type=range]{width:100%}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.ro{background:#f9f9f9;padding:10px;border-radius:8px;text-align:center}
+.ro .lbl{font-size:11px;color:#666}
+.ro .v{font-size:16px;font-weight:bold}
+.good .v{color:#16a34a}
+.warn .v{color:#d97706}
+.bad .v{color:#dc2626}
+.eff-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:8px 0}
+.eff-fill{height:100%;transition:all .3s}
+#canvasWrap{position:relative;background:linear-gradient(180deg,#87CEEB,#E0F0FF);min-width:0}
+#canvasWrap canvas{display:block;width:100%;height:100%}
+#systemInfo{background:#e8f5e9;padding:12px;border-radius:8px;margin-bottom:15px;border-right:3px solid #4CAF50;font-size:14px}
+.hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.8);padding:6px 12px;border-radius:20px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="panel">
+    <a class="back-link" href="index.html">← العودة للحاسبة</a>
+
+    <div id="systemInfo">
+      <p><strong>عدد الألواح:</strong> <span id="panelCount">10</span></p>
+      <p><strong>المساحة:</strong> <span id="totalArea">22.00</span> م²</p>
+    </div>
+
+    <h1>محاكي زوايا السقوط الشمسي</h1>
+    <div class="sub">استكشف تأثير الميل والاتجاه على الكفاءة</div>
+
+    <div class="sec">
+      <div class="sec-title">الموقع والوقت</div>
+      <select id="city">
+        <option value="24.7">الرياض (24.7°)</option>
+        <option value="24.5" selected>المدينة المنورة (24.5°)</option>
+        <option value="21.5">مكة/جدة (21.5°)</option>
+        <option value="26.4">بريدة (26.4°)</option>
+      </select>
+      <div class="slider-row">
+        <label>الشهر <span class="val" id="monthVal">6 (يونيو)</span></label>
+        <input type="range" id="month" min="1" max="12" value="6">
+      </div>
+      <div class="slider-row">
+        <label>الوقت <span class="val" id="hourVal">12:00</span></label>
+        <input type="range" id="hour" min="5" max="19" value="12" step="0.5">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">زوايا التركيب</div>
+      <div class="slider-row">
+        <label>زاوية الميل <span class="val" id="tiltVal">25°</span></label>
+        <input type="range" id="tilt" min="0" max="60" value="25">
+      </div>
+      <div class="slider-row">
+        <label>الاتجاه (الجنوب=180°) <span class="val" id="azVal">180°</span></label>
+        <input type="range" id="az" min="0" max="360" value="180" step="5">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">النتائج</div>
+      <div class="readout">
+        <div class="ro"><div class="lbl">ارتفاع الشمس</div><div class="v" id="oElev">—</div></div>
+        <div class="ro"><div class="lbl">اتجاه الشمس</div><div class="v" id="oAz">—</div></div>
+        <div class="ro"><div class="lbl">زاوية السقوط</div><div class="v" id="oInc">—</div></div>
+        <div class="ro good" id="effRo"><div class="lbl">الكفاءة</div><div class="v" id="oEff">—</div></div>
+      </div>
+      <div class="eff-bar"><div class="eff-fill" id="effFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="canvasWrap">
+    <div class="hint">اسحب للدوران • مرّر للتكبير</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ===== استقبال البيانات من index.html (يدعم الأسماء الإنجليزية والعربية) =====
+  var params = new URLSearchParams(window.location.search);
+  function num(keys, fallback){
+    for (var i=0;i<keys.length;i++){
+      var v = parseFloat(params.get(keys[i]));
+      if (isFinite(v) && v > 0) return v;
+    }
+    return fallback;
+  }
+  var panelCount = Math.max(1, Math.round(num(['panels','لوحات'], 10)));
+  var totalArea  = num(['area','مساحة'], panelCount * 2.2);
+
+  document.getElementById('panelCount').textContent = panelCount;
+  document.getElementById('totalArea').textContent = totalArea.toFixed(2);
+
+  var DEG = Math.PI / 180;
+  var MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+  // ===== أبعاد اللوح الواحد (نسبة 1.6 : 1) =====
+  var perPanelArea = totalArea / panelCount;
+  var pw = Math.sqrt(perPanelArea * 1.6);   // العرض
+  var ph = perPanelArea / pw;               // العمق
+  // ارتفاع العمود: يضمن أن أدنى نقطة في اللوح فوق الأرض عند أقصى ميل (60°)
+  var baseHeight = (ph / 2) * Math.sin(60 * DEG) + 0.35;
+  var cell = Math.max(pw, ph) + 0.6;        // مسافة كافية حتى لا تتصادم الألواح عند الدوران
+
+  var perRow = Math.min(panelCount, Math.max(4, Math.ceil(Math.sqrt(panelCount * 1.5))));
+  var rows = Math.ceil(panelCount / perRow);
+  var extent = Math.max(perRow, rows) * cell;   // حجم المشهد التقريبي
+
+  // ===== المشهد =====
+  var wrap = document.getElementById('canvasWrap');
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x87CEEB);
+
+  var camera = new THREE.PerspectiveCamera(45, wrap.clientWidth/wrap.clientHeight, 0.1, 1000);
+  var camDist = Math.max(10, extent * 1.2);
+  camera.position.set(camDist * 0.7, camDist * 0.55, camDist);
+
+  var renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.shadowMap.enabled = true;
+  wrap.appendChild(renderer.domElement);
+
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.target.set(0, baseHeight, 0);
+  controls.maxPolarAngle = Math.PI / 2 - 0.02;   // الكاميرا لا تنزل تحت الأرض
+
+  // ===== الإضاءة =====
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  var sunLight = new THREE.DirectionalLight(0xffffee, 1.4);
+  sunLight.castShadow = true;
+  var sc = sunLight.shadow.camera;
+  var sExt = extent * 0.8 + 5;
+  sc.left = -sExt; sc.right = sExt; sc.top = sExt; sc.bottom = -sExt;
+  sc.near = 0.5; sc.far = extent * 6 + 80;
+  sunLight.shadow.mapSize.set(2048, 2048);
+  sunLight.shadow.bias = -0.0005;
+  scene.add(sunLight);
+
+  var sunDist = Math.max(25, extent * 1.5);
+  var sunSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(Math.max(0.7, extent * 0.04), 32, 32),
+    new THREE.MeshBasicMaterial({color: 0xFFD700})
+  );
+  scene.add(sunSphere);
+
+  // ===== الأرض =====
+  var groundSize = Math.max(40, extent * 3);
+  var ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(groundSize, groundSize),
+    new THREE.MeshStandardMaterial({color: 0xF5F5DC})
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  scene.add(new THREE.GridHelper(groundSize, Math.round(groundSize), 0xCCCCCC, 0xE5E5E5));
+
+  // ===== الألواح =====
+  // كل لوح له: عمود ثابت عمودي + محور دوران (pivot) في أعلى العمود.
+  // الميل والاتجاه يُطبَّقان على المحور فقط، فيدور اللوح حول مركزه
+  // ولا يمكن أن يغوص في الأرض أو يطير.
+  var pivots = [];
+  var arrayGroup = new THREE.Group();
+  scene.add(arrayGroup);
+
+  var panelMat = new THREE.MeshStandardMaterial({color: 0x1976D2, metalness: 0.25, roughness: 0.35});
+  var poleMat  = new THREE.MeshStandardMaterial({color: 0x6B7280, metalness: 0.6, roughness: 0.3});
+  var panelGeo = new THREE.BoxGeometry(pw, 0.05, ph);
+  var poleGeo  = new THREE.CylinderGeometry(0.05, 0.06, baseHeight, 8);
+
+  var startX = -((perRow - 1) * cell) / 2;
+  var startZ = -((rows - 1) * cell) / 2;
+  var idx = 0;
+  for (var r = 0; r < rows && idx < panelCount; r++) {
+    for (var c = 0; c < perRow && idx < panelCount; c++) {
+      var x = startX + c * cell;
+      var z = startZ + r * cell;
+
+      var pole = new THREE.Mesh(poleGeo, poleMat);
+      pole.position.set(x, baseHeight / 2, z);
+      pole.castShadow = true;
+      arrayGroup.add(pole);
+
+      var pivot = new THREE.Group();
+      pivot.position.set(x, baseHeight, z);
+      pivot.rotation.order = 'YXZ';          // أولاً الاتجاه (Y) ثم الميل (X)
+      var panel = new THREE.Mesh(panelGeo, panelMat);
+      panel.castShadow = true;
+      panel.receiveShadow = true;
+      pivot.add(panel);
+      arrayGroup.add(pivot);
+      pivots.push(pivot);
+      idx++;
+    }
+  }
+
+  // ===== عناصر التحكم =====
+  var citySel = document.getElementById('city');
+  var monthIn = document.getElementById('month');
+  var hourIn  = document.getElementById('hour');
+  var tiltIn  = document.getElementById('tilt');
+  var azIn    = document.getElementById('az');
+
+  // اتجاهات المشهد: الشمال = -Z ، الجنوب = +Z ، الشرق = +X
+  function recalc() {
+    var lat   = parseFloat(citySel.value) * DEG;
+    var month = parseInt(monthIn.value, 10);
+    var hour  = parseFloat(hourIn.value);
+    var tilt  = parseFloat(tiltIn.value) * DEG;
+    var az    = parseFloat(azIn.value) * DEG;
+
+    document.getElementById('monthVal').textContent = month + ' (' + MONTHS[month-1] + ')';
+    var hh = Math.floor(hour), mm = (hour - hh) * 60 ? '30' : '00';
+    document.getElementById('hourVal').textContent = hh + ':' + mm;
+    document.getElementById('tiltVal').textContent = tiltIn.value + '°';
+    document.getElementById('azVal').textContent = azIn.value + '°';
+
+    // موضع الشمس
+    var day = (month - 1) * 30 + 15;
+    var decl = 23.45 * Math.sin((360/365) * (284 + day) * DEG) * DEG;
+    var hourAngle = (hour - 12) * 15 * DEG;
+
+    var sinElev = Math.sin(decl)*Math.sin(lat) + Math.cos(decl)*Math.cos(lat)*Math.cos(hourAngle);
+    var elev = Math.asin(Math.max(-1, Math.min(1, sinElev)));
+
+    var sunAz = Math.PI;
+    if (elev > 0) {
+      var cosAz = (Math.sin(decl) - Math.sin(lat)*Math.sin(elev)) / (Math.cos(lat)*Math.cos(elev));
+      sunAz = Math.acos(Math.max(-1, Math.min(1, cosAz)));
+      if (hour > 12) sunAz = 2 * Math.PI - sunAz;
+    }
+
+    // زاوية السقوط وكفاءة الاستقبال (اللوح لا يستقبل شيئاً إذا الشمس تحت الأفق)
+    var cosInc = Math.sin(elev)*Math.cos(tilt) + Math.cos(elev)*Math.sin(tilt)*Math.cos(sunAz - az);
+    var efficiency = elev > 0 ? Math.max(0, cosInc) : 0;
+
+    document.getElementById('oElev').textContent = (elev/DEG).toFixed(1) + '°';
+    document.getElementById('oAz').textContent = elev > 0 ? (sunAz/DEG).toFixed(1) + '°' : '—';
+    document.getElementById('oInc').textContent = elev > 0 ? (Math.acos(Math.max(-1, Math.min(1, cosInc)))/DEG).toFixed(1) + '°' : '—';
+    document.getElementById('oEff').textContent = (efficiency*100).toFixed(0) + '%';
+
+    var fill = document.getElementById('effFill');
+    var ro = document.getElementById('effRo');
+    fill.style.width = (efficiency*100) + '%';
+    if (efficiency >= 0.85) { fill.style.background = '#22c55e'; ro.className = 'ro good'; }
+    else if (efficiency >= 0.6) { fill.style.background = '#f59e0b'; ro.className = 'ro warn'; }
+    else { fill.style.background = '#ef4444'; ro.className = 'ro bad'; }
+
+    // ✅ تدوير كل لوح حول مركزه (لا يغوص في الأرض)
+    // rotation.y = π − az  →  يجعل اللوح يميل نحو اتجاه az (180° = جنوب = +Z)
+    // rotation.x = tilt    →  زاوية الميل عن الأفقي
+    for (var i = 0; i < pivots.length; i++) {
+      pivots[i].rotation.y = Math.PI - az;
+      pivots[i].rotation.x = tilt;
+    }
+
+    // موضع الشمس (نفس اتجاهات المشهد: x = sin(az) , z = -cos(az))
+    sunSphere.position.set(
+      sunDist * Math.sin(sunAz) * Math.cos(elev),
+      sunDist * Math.sin(elev),
+      -sunDist * Math.cos(sunAz) * Math.cos(elev)
+    );
+    sunSphere.visible = elev > 0;
+    sunLight.position.copy(sunSphere.position);
+    sunLight.intensity = elev > 0 ? 1.4 : 0;
+  }
+
+  [citySel, monthIn, hourIn, tiltIn, azIn].forEach(function(el){
+    el.addEventListener('input', recalc);
+    el.addEventListener('change', recalc);
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  recalc();
+  animate();
+
+  window.addEventListener('resize', function(){
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  });
+})();
+</script>
+</body>
+</html>
